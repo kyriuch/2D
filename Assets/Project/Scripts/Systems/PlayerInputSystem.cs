@@ -1,47 +1,29 @@
-﻿using UnityEngine;
-using UnityEngine.InputSystem;
+﻿using Leopotam.Ecs;
+using Project.Scripts.Components;
+using UnityEngine;
 
 namespace Project.Scripts.Systems
 {
-    public class PlayerInputSystem : SystemMonoBehaviour
+    public class PlayerInputSystem : IEcsDestroySystem, IEcsRunSystem
     {
-        private InputMaster inputMaster;
-        private Components.Input input;
-    
-        protected override void SystemAwake()
-        {
-            base.SystemAwake();
+        private readonly EcsFilter<PlayerInputComponent, InputComponent> playerInputFilter = null;
 
-            inputMaster = new InputMaster();
-            TryGetEntityComponent(out input);
+        public void Destroy()
+        {
+            foreach (int i in playerInputFilter)
+            {
+                playerInputFilter.Get1(i).InputMaster.Disable();
+            }
         }
 
-        protected override void SystemEnabled()
+        public void Run()
         {
-            base.SystemEnabled();
-            
-            inputMaster.Enable();
-            inputMaster.PlayerActions.AttackAction.performed += OnAttackPerformed;
-        }
-
-        protected override void SystemDisabled()
-        {
-            base.SystemDisabled();
-            
-            inputMaster.PlayerActions.AttackAction.performed -= OnAttackPerformed;
-            inputMaster.Disable();
-        }
-        
-        private void OnAttackPerformed(InputAction.CallbackContext obj)
-        {
-            input.DispatchAttackPerformed();
-        }
-
-        protected override void SystemUpdate()
-        {
-            base.SystemUpdate();
-            
-            input.Movement = inputMaster.PlayerActions.MovementAction.ReadValue<Vector2>();
+            foreach (int i in playerInputFilter)
+            {
+                ref InputComponent inputComponent = ref playerInputFilter.Get2(i);
+                inputComponent.MovementVector = playerInputFilter.Get1(i).InputMaster.PlayerActions.MovementAction
+                    .ReadValue<Vector2>();
+            }
         }
     }
 }

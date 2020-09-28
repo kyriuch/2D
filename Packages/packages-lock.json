@@ -1,5 +1,12 @@
 {
   "dependencies": {
+    "com.leopotam.ecs": {
+      "version": "https://github.com/Leopotam/ecs.git",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "e2522cdde5a3e08e17f6eaef1d0b34c125f276cc"
+    },
     "com.unity.2d.pixel-perfect": {
       "version": "2.0.4",
       "depth": 0,
