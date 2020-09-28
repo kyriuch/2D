@@ -7,9 +7,9 @@ namespace Project.Scripts.Systems
 {
     
     
-    public class ViewSystem : IEcsRunSystem
+    public class WorldObjectSystem : IEcsRunSystem
     {
-        private readonly EcsFilter<CreateGameObjectEvent> createEvents = null;
+        private readonly EcsFilter<CreateWorldObjectEvent> createEvents = null;
 
         public void Run()
         {
@@ -17,21 +17,22 @@ namespace Project.Scripts.Systems
             {
                 EcsEntity entity = createEvents.GetEntity(i);
 
-                GameObject newInstance = Object.Instantiate(entity.Get<CreateGameObjectEvent>().Prefab);
-                entity.Get<ViewComponent>().GameObjectRef = newInstance;
-                entity.Del<CreateGameObjectEvent>();
-                entity.Replace(new MovementComponent()
+                GameObject newInstance = Object.Instantiate(entity.Get<CreateWorldObjectEvent>().Prefab);
+                entity.Replace(new WorldObjectComponent()
+                {
+                    WorldObjectRef = newInstance
+                }).Replace(new MovementComponent()
                 {
                     Rigidbody2D = newInstance.GetComponent<Rigidbody2D>(),
                     Speed = 3f
-                });
-                entity.Replace(new PlayerInputComponent()
+                }).Replace(new PlayerInputComponent()
                 {
                     InputMaster = new InputMaster()
-                });
+                })
+                    .Replace(new InputComponent());
+                
                 ref PlayerInputComponent playerInputComponent = ref entity.Get<PlayerInputComponent>();
                 playerInputComponent.InputMaster.Enable();
-                entity.Replace(new InputComponent());
             }
         }
     }

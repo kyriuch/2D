@@ -2,7 +2,7 @@
 
 namespace Project.Scripts.Events
 {
-    public struct CreateGameObjectEvent
+    public struct CreateWorldObjectEvent
     {
         public GameObject Prefab;
     }
